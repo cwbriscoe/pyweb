@@ -1,0 +1,4 @@
+#!/bin/bash
+export PATH=${PWD}/scripts:$PATH
+source ../bin/activate
+sudo service postgresql start
