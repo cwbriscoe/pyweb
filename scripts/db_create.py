@@ -21,6 +21,11 @@ def create_table(conn, name, extras):
   runsql(conn, create)
 
 
+def insert(conn, name, values):
+    sql = "INSERT INTO " + name + " VALUES(" + values + ");"
+    runsql(conn, sql)
+
+
 def main():
   try:
     conn = dbase.connect("host='localhost' dbname='testdb' user='chris' password='commode'")
@@ -34,14 +39,25 @@ def main():
     pass    varchar(40),
     PRIMARY KEY(id)
   """)
+  insert(conn, "users", "0, 'chris'")
+  insert(conn, "users", "1, 'bob'")
+  insert(conn, "users", "2, 'george'")
+  insert(conn, "users", "3, 'fred'")
+  insert(conn, "users", "4, 'brice'")
 
   create_table(conn, "auth", """
-    id      integer references users(id) on delete cascade,
+    user_id integer references users(id) on delete cascade,
     version integer,
     hash    varchar(256),
     salt    varchar(40),
-    PRIMARY KEY(id)
+    PRIMARY KEY(user_id)
   """)
+  insert(conn, "auth", "0, 1, 'chrispass', 'chrissalt'")
+  insert(conn, "auth", "1, 1, 'bobpass', 'bobsalt'")
+  insert(conn, "auth", "2, 1, 'georgepass', 'georgesalt'")
+  insert(conn, "auth", "3, 1, 'fredpass', 'fredsalt'")
+  insert(conn, "auth", "4, 1, 'bricepass', 'bricesalt'")
+
 
 if __name__ == "__main__":
   main()

@@ -13,47 +13,22 @@ log = logging.getLogger(__file__)
 here = os.path.dirname(os.path.abspath(__file__))
 
 
-'''
-try:
-  conn = dbase.connect("host='localhost' dbname='testdb' user='chris' password='commode'")
-  print "Database connected"
-except:
-  print "I am unable to connect to the database"
-'''
-
-'''
-try:
-  cur = conn.cursor()
-  cur.execute("""
-    CREATE TABLE distributors (
-      did     integer,
-      name    varchar(40),
-      PRIMARY KEY(did)
-  );""")
-  conn.commit()
-except:
-  print "Unable to create table"
-'''
-
-
 @subscriber(ApplicationCreated)
 def application_created_subscriber(event):
-    log.warn('Initializing application...')
+  log.warn('Initializing application...')
 
 
 @subscriber(NewRequest)
 def new_request_subscriber(event):
-    log.warn('new request')
-    request = event.request
-    settings = request.registry.settings
-    request.db = dbase.connect(settings['dsn'])
-    #request.db = dbase.connect("host='localhost' dbname='testdb' user='chris' password='commode'")
-    #request.db = sqlite3.connect(settings['db'])
-    request.add_finished_callback(close_db_connection)
+  #log.warn('new request')
+  request = event.request
+  settings = request.registry.settings
+  request.db = dbase.connect(settings['dsn'])
+  request.add_finished_callback(close_db_connection)
 
 
 def close_db_connection(request):
-    request.db.close()
+  request.db.close()
 
 
 def main(global_config, **settings):
@@ -68,6 +43,9 @@ def main(global_config, **settings):
   jinja.trim_blocks = True
 
   config.add_static_view('static', 'static', cache_max_age=3600)
+  #config.override_asset(to_override='favicon.icon', override_with='/static/favicon.ico')
+  config.add_route('favicon', '/favicon.ico')
   config.add_route('home', '/')
+  config.add_route('login', '/login')
   config.scan()
   return config.make_wsgi_app()

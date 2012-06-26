@@ -1,13 +1,16 @@
 {% extends "base.jinja2" %}
-{% block title %}Index{% endblock %}
-{% block header %}
-  {{ super() }}
-  <style type="text/css">
-    .important { color: #336699; }
-  </style>
-{% endblock %}
 {% block content %}
-  <h1>Index</h1>
+  <div>
+    <table>
+      {% for row in rows %}
+        <tr>
+          {% for column in row %}
+            <td>{{ column }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
   <p class="important">
     Welcome on my awesome homepage. Project = {{ project }}
   </p>

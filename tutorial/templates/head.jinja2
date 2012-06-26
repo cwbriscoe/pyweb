@@ -1,3 +1,15 @@
 {% block head %}
   <h1>Template Header For {{ project }}</h1>
+  {% import 'forms.jinja2' as forms %}
+  <form name="input" action="/login" method="post">
+    <table>
+      <tr>
+        <td>Username</td>
+        <td>{{ forms.input('username', value=username) }}</td>
+        <td>Password</td>
+        <td>{{ forms.input('password', type='password', value=password) }}</td>
+        <td>{{ forms.input('submit', type='submit', value='submit') }}</td>
+      </tr>
+    </table>
+  </form>
 {% endblock %}
