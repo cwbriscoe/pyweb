@@ -1,4 +1,5 @@
 from pyramid.view import view_config
+from classes.Session import Session
 
 
 @view_config(route_name='login', renderer='login.jinja2')
@@ -19,5 +20,7 @@ def login_view(request):
   pwd = request.params['password']
 
   print "username:" + name + "    password:" + pwd
+
+  sess = Session("100,chris,9999")
 
   return {'title': title, 'username': name, 'password': pwd}
