@@ -1,11 +1,14 @@
 from pyramid.view import view_config
+from classes.Session import Session
 
 
 @view_config(route_name='home', renderer='home.jinja2')
 def home_view(request):
   title = 'Home Page'
 
-  print "home page view now running"
+  sess = Session(request)
+
+  print "home page view now running, name=" + sess.get_name()
 
   cur = request.db.cursor()
   cur.execute("""
@@ -17,4 +20,4 @@ def home_view(request):
    """)
   rows = cur.fetchall()
 
-  return {'title': title, 'rows': rows}
+  return {'title': title, 'sess': sess, 'rows': rows}
