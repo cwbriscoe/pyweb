@@ -21,6 +21,14 @@ def create_table(conn, name, extras):
   runsql(conn, create)
 
 
+def create_index(conn, name, tblname, unique, extras):
+  crtidx = "CREATE "
+  if unique == True:
+    crtidx += "UNIQUE "
+  crtidx += "INDEX " + name + " ON " + tblname + " (" + extras + ");"
+  runsql(conn, crtidx)
+
+
 def insert(conn, name, values):
     sql = "INSERT INTO " + name + " VALUES(" + values + ");"
     runsql(conn, sql)
@@ -35,7 +43,7 @@ def main():
 
   create_table(conn, "users", """
     id      serial,
-    name    varchar(40),
+    name    varchar(24),
     PRIMARY KEY(id)
   """)
   insert(conn, "users", "DEFAULT, 'chris'")
@@ -43,10 +51,11 @@ def main():
   insert(conn, "users", "DEFAULT, 'george'")
   insert(conn, "users", "DEFAULT, 'fred'")
   insert(conn, "users", "DEFAULT, 'brice'")
+  create_index(conn, "users_idx", "users", True, "lower(name)")
 
   create_table(conn, "auth", """
     user_id integer references users(id) on delete cascade,
-    version integer,
+    ver     integer,
     hash    varchar(256),
     salt    varchar(40),
     PRIMARY KEY(user_id)
@@ -56,6 +65,41 @@ def main():
   insert(conn, "auth", "3, 1, 'georgepass', 'georgesalt'")
   insert(conn, "auth", "4, 1, 'fredpass', 'fredsalt'")
   insert(conn, "auth", "5, 1, 'bricepass', 'bricesalt'")
+
+  create_table(conn, "groups", """
+    id       serial,
+    name     varchar(16),
+    PRIMARY KEY(id)
+  """)
+  insert(conn, "groups", "DEFAULT, 'worldnews'")
+  insert(conn, "groups", "DEFAULT, 'politics'")
+  insert(conn, "groups", "DEFAULT, 'programming'")
+  insert(conn, "groups", "DEFAULT, 'cpp'")
+  insert(conn, "groups", "DEFAULT, 'python'")
+  insert(conn, "groups", "DEFAULT, 'running'")
+  insert(conn, "groups", "DEFAULT, 'funny'")
+  insert(conn, "groups", "DEFAULT, 'science'")
+  insert(conn, "groups", "DEFAULT, 'android'")
+  insert(conn, "groups", "DEFAULT, 'technology'")
+  insert(conn, "groups", "DEFAULT, 'wtf'")
+  insert(conn, "groups", "DEFAULT, 'gonewild'")
+  create_index(conn, "groups_idx", "groups", True, "lower(name)")
+
+  create_table(conn, "topics", """
+    id       serial,
+    group_id integer references groups(id) on delete cascade,
+    user_id  integer references users(id) on delete set null,
+    text     varchar(128),
+    PRIMARY KEY(id)
+  """)
+
+  create_table(conn, "posts", """
+    id       serial,
+    topic_id integer references topics(id) on delete cascade,
+    user_id  integer references users(id) on delete set null,
+    text     varchar(4000),
+    PRIMARY KEY(id)
+  """)
 
 
 if __name__ == "__main__":
