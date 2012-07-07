@@ -1,11 +1,22 @@
 {% block head %}
-  <h1>Template Header For {{ project }}</h1>
-  <a href="/login">
-    {% set uname = sess.get_name() %}
-    {% if uname %}
-      {{ sess.get_name() }}
-    {% else %}
-      Login
+  <div>
+    <a href="/">Home</a>
+    <a href="/login">
+      {% if sess %}
+        Logoff
+      {% else %}
+        Login
+      {% endif %}
+    </a>
+  </div>
+  <h1>Template Header For {{ project }}
+    {% if sess %}
+      {% set uname = sess.get_name() %}
+      {% if uname %}
+        {{ uname }}
+      {% else %}
+        Nobody
+      {% endif %}
     {% endif %}
-  </a>
+  </h1>
 {% endblock %}

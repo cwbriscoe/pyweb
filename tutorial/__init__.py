@@ -1,16 +1,26 @@
 import os
 import logging
+import psycopg2 as dbase
 from pyramid.config import Configurator
 from pyramid.events import NewRequest
 from pyramid.events import subscriber
 from pyramid.events import ApplicationCreated
-import psycopg2 as dbase
+from pyramid.request import Request
+from classes.Session import Session
 
 
 #setup logging
 logging.basicConfig()
 log = logging.getLogger(__file__)
 here = os.path.dirname(os.path.abspath(__file__))
+
+
+class MyRequest(Request):
+  def __init__(self, environ):
+    if hasattr(Request, '__init__'):
+      Request.__init__(self, environ)
+    #pass
+    self.sess = Session(self)
 
 
 @subscriber(ApplicationCreated)
@@ -34,6 +44,8 @@ def close_db_connection(request):
 def main(global_config, **settings):
   #print settings
   config = Configurator(settings=settings)
+
+  config.set_request_factory(MyRequest)
 
   #configure jinja2
   config.include('pyramid_jinja2')
